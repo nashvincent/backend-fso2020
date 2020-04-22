@@ -3,7 +3,7 @@ const morgan = require("morgan")
 const cors = require("cors")
 const app = express()
 
-app.use(express.static("build"))
+//app.use(express.static("build"))
 app.use(express.json())
 app.use(cors())
 
@@ -62,9 +62,16 @@ app.get('/api/persons/:id', (request, response) => {
 
 app.delete('/api/persons/:id', (request, response) => {
   const id = Number(request.params.id)
-  persons = persons.filter(person => person.id !== id)
+
+  if (persons.some(person => person.id === id)) {
+    persons = persons.filter(person => person.id !== id)  
+    response.status(204).end()
+  }
   
-  response.status(204).end()
+  else {
+    response.status(404).end()
+  }
+
 })
 
 const generateId = () => {
