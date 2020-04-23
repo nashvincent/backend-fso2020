@@ -1,23 +1,23 @@
 require('dotenv').config()
-const express = require("express")
-const morgan = require("morgan")
-const cors = require("cors")
+const express = require('express')
+const morgan = require('morgan')
+const cors = require('cors')
 const Person = require('./models/person')   //($env:MONGODB_URL = "mongodb+srv://fullstack:windows8@phonebook-ubsqm.mongodb.net/phonebook?retryWrites=true&w=majority") -and (npm start)
 
 const app = express()
 
 const unknownEndpoint = (request, response) => {
-  response.status(404).send({ error: "unknown endpoint" });
-};
+  response.status(404).send({ error: 'unknown endpoint' })
+}
 
-app.use(express.static("build"))
+app.use(express.static('build'))
 app.use(express.json())
 app.use(cors())
 
-morgan.token('type', function (request, response) { return JSON.stringify(request.body)})
+morgan.token('type', function (request) { return JSON.stringify(request.body)})
 app.use(morgan(':method :url :status :res[content-length] - :response-time ms :type' ))
 
-app.get('/', (request, response) => {
+app.get('/', (response) => {
   response.send('<h1>Hello World</h1>')
 })
 
@@ -33,10 +33,10 @@ app.get('/info', (request, response, next) => {
 
 })
 
-app.get('/api/persons', (request, response) => {
+app.get('/api/persons', (request, response, next) => {
   Person.find({})
     .then(person => {
-    response.json(person)
+      response.json(person)
     })
     .catch(error => next(error))
 })
@@ -68,7 +68,7 @@ app.delete('/api/persons/:id', (request, response, next) => {
 
 })
 
-app.post('/api/persons/', (request, response, next) => {
+app.post('/api/persons/', (request, response) => {
   const body = request.body
   
   const person = new Person ({
@@ -79,7 +79,7 @@ app.post('/api/persons/', (request, response, next) => {
   person.save()
     .then(savedPerson => response.json(savedPerson.toJSON()))
     .catch(error => {
-
+      
       response.status(400).json({ error: error.message })
     })
 })
@@ -101,13 +101,13 @@ app.put('/api/persons/:id', (request, response, next) => {
 app.use(unknownEndpoint)
 
 const errorHandler = (error, request, response, next) => {
-  console.log("\nERROR HANDLER")
+  console.log('\nERROR HANDLER')
   console.log(error.message, error.name)
 
-  if (error.name === "CastError") {
+  if (error.name === 'CastError') {
     return response.status(400).send({ error: 'malformatted id' })
   }
-  else if (error.name === "ValidationError") {
+  else if (error.name === 'ValidationError') {
     return response.status(400).json({ error: error.message })
   }
 

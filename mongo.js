@@ -1,18 +1,18 @@
 // node mongo.js windows8
 const mongoose = require('mongoose')
-let insertFlag = false;
+let insertFlag = false
 
 if (process.argv.length < 3) {
-    console.log('give password as argument')
-    process.exit(1)
+  console.log('give password as argument')
+  process.exit(1)
 }
 
 if (process.argv.length === 3) {
-  insertFlag = false;
+  insertFlag = false
 }
 
 if (process.argv.length === 5) {
-  insertFlag = true;
+  insertFlag = true
 }
 
 const password = process.argv[2]
@@ -20,8 +20,8 @@ const url = `mongodb+srv://fullstack:${password}@phonebook-ubsqm.mongodb.net/pho
 mongoose.connect(url, {useNewUrlParser: true, useUnifiedTopology: true })
 
 const personSchema = new mongoose.Schema({
-    name: String,
-    number: String
+  name: String,
+  number: String
 })
 const Person = mongoose.model('Person', personSchema)
 
